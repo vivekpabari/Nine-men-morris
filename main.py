@@ -1,5 +1,6 @@
 import pygame 
 import sys
+import os
 from pygame import mixer
 pygame.init()
 mixer.init()
@@ -7,10 +8,10 @@ mixer.init()
 
 screen = pygame.display.set_mode((900,800))
 
-img = [pygame.image.load("images/img1.png"),pygame.image.load("images/img1.png")]
+img = [pygame.image.load(os.path.join(os.path.dirname(__file__),"images\\img2.png")),pygame.image.load(os.path.join(os.path.dirname(__file__),"images\\img1.png"))]
 img = [pygame.transform.scale(img[0], (80,80)),pygame.transform.scale(img[1], (80,80))]
 
-background_img = pygame.image.load("images/background.jpg")
+background_img = pygame.image.load(os.path.join(os.path.dirname(__file__),"images\\background.jpg"))
 background_img = pygame.transform.scale(background_img,(900,800))
 
 black_color = (0,0,0)
@@ -77,7 +78,6 @@ def draw_board():
         pygame.draw.line(screen,line_color,A[0][i],A[2][i],line_width)
 
 def draw_piece(turn,x,y):
-    #print("pr")
     rect_image = img[turn].get_rect(center = A[x][y])
     screen.blit(img[turn],rect_image)
 
@@ -92,13 +92,13 @@ def rect_text_box(sentence):
 def game_sound(x):
     mixer.music.set_volume(0.7)
     if x==0:
-        pygame.mixer.Channel(1).play(pygame.mixer.Sound("sound/add.wav"))
+        pygame.mixer.Channel(1).play(pygame.mixer.Sound(os.path.join(os.path.dirname(__file__),"sound/add.wav")))
     elif x==1:
-        pygame.mixer.Channel(1).play(pygame.mixer.Sound("sound/remove.wav"))
+        pygame.mixer.Channel(1).play(pygame.mixer.Sound(os.path.join(os.path.dirname(__file__),"sound/remove.wav")))
     elif x==2:
-        pygame.mixer.Channel(1).play(pygame.mixer.Sound("sound/move.wav"))
+        pygame.mixer.Channel(1).play(pygame.mixer.Sound(os.path.join(os.path.dirname(__file__),"sound/move.wav")))
     elif x==3:
-        pygame.mixer.Channel(1).play(pygame.mixer.Sound("sound/win.wav"))
+        pygame.mixer.Channel(1).play(pygame.mixer.Sound(os.path.join(os.path.dirname(__file__),"sound/win.wav")))
 
 
 
@@ -180,8 +180,6 @@ class game:
             return True
 
     def start_game(self,x,y):
-        #print("hii")
-        #print(self.player_add)
         self.sound = -1
         if self.if_win == 1:
             if self.remove(x,y,self.turn):
@@ -195,7 +193,6 @@ class game:
                     self.turn = (self.turn+1)%2
                     self.message = turn_message[self.turn]
         elif min(self.player_add)<9:
-            #print("jii")
             if self.add(x,y,self.turn):
                 if self.three_seq(x,y,self.turn):
                     self.if_win = 1
@@ -206,24 +203,16 @@ class game:
                         self.message = "first player turn to move"
                     else:   
                         self.message = turn_message[self.turn]
-                #print("vii")
         elif min(self.player_add)==9:
-            #print("moving")
-            #draw function
             if self.x_old == -1 and self.places[x][y]==self.turn:
-                #print("stage1")
                 self.x_old = x 
                 self.y_old = y
                 self.message = "select postion to move"
             else:
-                #print("stage2")
-                #print(self.x_old,self.y_old)
                 if self.move(x,y,self.x_old,self.y_old,self.turn):
-                    #print("stage2_sucess")
                     self.x_old = -1
                     self.y_old = -1
                     if self.three_seq(x,y,self.turn):
-                        #print("three")
                         self.message = turn_message[2 + self.turn]
                         self.if_win = 1
                     else:
